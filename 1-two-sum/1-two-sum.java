@@ -10,13 +10,15 @@ class Solution {
         
         for (int i = 0; i < nums.length; i++) {
             int soulmate = target - nums[i];
-            int index = map.getOrDefault(soulmate, -1);
             
-            if (map.containsKey(soulmate) && i != index) {
-                return new int[]{i, index};
+            if (map.containsKey(soulmate)) {
+                int index = map.getOrDefault(soulmate, -1);
+                
+                if (i != index) {
+                    return new int[]{i, index};
+                }
             }
         }
-        
         
         return new int[]{};
     }
