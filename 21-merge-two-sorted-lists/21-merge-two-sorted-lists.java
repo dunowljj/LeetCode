@@ -11,43 +11,32 @@
 class Solution {
 
     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
-        ListNode head = new ListNode(0);
-        
-        merge(head, list1, list2);
-        
-        return head.next;
-    }
-    
-    private void merge(ListNode head, ListNode list1, ListNode list2) {
-
         if (list1 == null && list2 == null) {
-            return;
+            return list1;
         }
         
         if (list1 == null) {
-            head.next = list2;   
-            return;
+            return list2;
         }
         
         if (list2 == null) {
-            head.next = list1;
-            return;
+            return list1;
         }
+        
         
         if (list1.val < list2.val) {
-            head.next = list1;
-            merge(head.next, list1.next, list2);
-            
+            list1.next = mergeTwoLists(list1.next, list2);
+            return list1;
         } else {
-            head.next = list2;
-            merge(head.next, list1, list2.next);
+            list2.next = mergeTwoLists(list1, list2.next);
+            return list2;
         }
-        
-        
     }
 }
 /*
+smallerNode : which has smaller value.
+
 1) Compare two Node
-2) Attatch smaller one at head.next
-3) Recursion with next ListNode
+2) Recursion : Attatch samllerNode at smallerNode.next (= Decide firstNode : smallerNode will be start of LinkedList and finally will returned)
+3) Return smallerNode head(list1 or list2)
 */
