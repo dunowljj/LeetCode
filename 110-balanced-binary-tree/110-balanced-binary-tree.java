@@ -19,8 +19,10 @@ class Solution {
             return true;
         }
         
-        int leftHeight = getHeight(root.left);
-        int rightHeight = getHeight(root.right);
+        setHeightInVal(root);
+        
+        int leftHeight = root.left == null ? 0 : root.left.val;
+        int rightHeight = root.right == null ? 0 : root.right.val;
           
         if (Math.abs(leftHeight - rightHeight) > 1) {
             return false;
@@ -30,15 +32,13 @@ class Solution {
 
     }
     
-    private int getHeight(TreeNode node) {
+    private int setHeightInVal(TreeNode node) {
         if (node == null) {
             return 0;
+        } else {
+            node.val =  Math.max(setHeightInVal(node.left), setHeightInVal(node.right)) + 1;
         }
         
-        return Math.max(getHeight(node.left), getHeight(node.right)) + 1;
+        return node.val;
     }
 }
-
-/*
- 
-*/
