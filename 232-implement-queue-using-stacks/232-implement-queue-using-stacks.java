@@ -9,23 +9,17 @@ class MyQueue {
     }
     
     public void push(int x) {
+        pushAllToStack2();
         stack1.push(x);
+        pushAllToStack1();
     }
     
     public int pop() {
-        pushAllToStack2();
-        int x = stack2.pop();
-        pushAllToStack1();
-        
-        return x;
+        return stack1.pop();
     }
     
     public int peek() {
-        pushAllToStack2();
-        int x = stack2.peek();
-        pushAllToStack1();
-        
-        return x;
+        return stack1.peek();
     }
     
     public boolean empty() {
