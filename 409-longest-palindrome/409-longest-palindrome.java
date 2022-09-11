@@ -1,24 +1,27 @@
 class Solution {
     public int longestPalindrome(String s) {
         int answer = 0;
-        int[] counting = new int[52];
-        
+        // int[] counting = new int[52];
+        int[] counting = new int[123];
+
         for (int i = 0; i < s.length(); i++) {
-            char curr = s.charAt(i);
+            counting[s.charAt(i)]++;
             
-            if ('a' <= curr && curr <= 'z') {
-                counting[curr - 'a']++;
-                continue;
-            }
+//             if ('a' <= curr && curr <= 'z') {
+//                 counting[curr - 'a']++;
+//                 continue;
+//             }
             
-            if ('A' <= curr && curr <= 'Z') {
-                counting[curr - 'A' + 26]++;
-                continue;
-            }
+//             if ('A' <= curr && curr <= 'Z') {
+//                 counting[curr - 'A' + 26]++;
+//                 continue;
+//             }
         }
         
         boolean center = false;
-        for (int i = 0; i < 52; i++) {
+        // for (int i = 0; i < 52; i++) {
+        for (int i = 0; i < 123; i++) {
+
             int count = counting[i];
             
             answer += (count / 2) * 2;
