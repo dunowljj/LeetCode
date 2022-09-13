@@ -19,23 +19,21 @@ class Solution {
         if (root == null) {
             return 0;
         }
-        
-        diameterOfBinaryTree(root.left);
-        diameterOfBinaryTree(root.right);
-        
-        max =  Math.max(max, getDiameter(root.left) + getDiameter(root.right));
+        getDiameter(root);
         
         return max;
     }
     
     // 각 노드에서 하위노드 방향으로 가장 긴 값을 구한다.
-    private int getDiameter(TreeNode farNode) {
-        if (farNode == null) {
+    private int getDiameter(TreeNode node) {
+        if (node == null) {
             return 0;
         }
         
-        int count1 = getDiameter(farNode.right);
-        int count2 = getDiameter(farNode.left);
+        int count1 = getDiameter(node.right);
+        int count2 = getDiameter(node.left);
+        
+        max = Math.max(max, count1 + count2);        
         
         return Math.max(count1, count2) + 1;
     }
