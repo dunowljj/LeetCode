@@ -1,77 +1,55 @@
-class Trie {
-    List<String> trie;
-    String previous;
+class TrieNode {
+    TrieNode[] children = new TrieNode[26];
+    boolean isWord = false;
     
-    public Trie() {
-        this.trie = new LinkedList();
+}
+class Trie {
+    
+    TrieNode root;
+    
+    Trie() {
+        root = new TrieNode();
     }
     
     public void insert(String word) {
-        int start = 0;
-        int end = trie.size() - 1;
-        int mid = 0;
-        String midVal = "";
+        TrieNode curr = root;
         
-        while (start <= end) {
-            mid = (start + end) / 2;
-            midVal = trie.get(mid);
+        for (int i = 0; i < word.length(); i++) {
+            int idx = word.charAt(i) - 'a';
             
-            if (midVal.equals(word)) {
-                trie.add(mid, word);
-                return;
-            } else if (midVal.compareTo(word) > 0) {
-                end = mid - 1;
-            } else {
-                start = mid + 1;
-            }
+            if (curr.children[idx] == null) curr.children[idx] = new TrieNode();
+            
+            curr = curr.children[idx];
         }
-        
-        trie.add(start, word);
+        curr.isWord = true;
     }
     
     public boolean search(String word) {
-        int start = 0;
-        int end = trie.size() - 1;
-        int mid = 0;
-        String midVal = "";
-        
-        while (start <= end) {
-            mid = (start + end) / 2;
-            midVal = trie.get(mid);
+        TrieNode curr = root;
+
+        for (int i = 0; i < word.length(); i++) {
+            int idx = word.charAt(i) - 'a';
             
-            
-            if (midVal.equals(word)) {
-                return true;
-            } else if (midVal.compareTo(word) > 0) {
-                end = mid - 1;
-            } else {
-                start = mid + 1;
-            }
+            if (curr.children[idx] == null) return false;
+
+            curr = curr.children[idx];
         }
-            
-        return false;
+        
+        return curr.isWord;
     }
     
     public boolean startsWith(String prefix) {
-        int start = 0;
-        int end = trie.size() - 1;
-        int mid = 0;
-        String midVal = "";
+        TrieNode curr = root;
         
-        while (start <= end) {
-            mid = (start + end) / 2;
-            midVal = trie.get(mid);
+        for (int i = 0; i < prefix.length(); i++) {
+            int idx = prefix.charAt(i) - 'a';
             
-            if (midVal.startsWith(prefix)) {
-                return true;
-            } else if (midVal.compareTo(prefix) > 0) {
-                end = mid - 1;
-            } else {
-                start = mid + 1;
-            }
+            if (curr.children[idx] == null) return false;
+
+            curr = curr.children[idx];
         }
-            
-        return false;
+        
+        return true;
     }
 }
 
@@ -83,13 +61,6 @@ class Trie {
  * boolean param_3 = obj.startsWith(prefix);
  */
 
-
-/* 0~6 -> 0 + 7 / 2 -> 3  
-1) 0~2 -> 2 / 2 -> 1
-    1 -1) 1 / 2 -> 0 -> 0~0 mid0 s1,e0 or s0,e-1
-2) 4~7 -> 11/ 2 -> 5
-
-1 <= word.length, prefix.length <= 2000
-3 * 10^4 calls in total
-binarySearch
+/*
+-> Tree 방식으로 변경. 자식노드 배열을 이용하기
 */ 
