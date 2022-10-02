@@ -1,38 +1,34 @@
 class Solution {
     public int[] productExceptSelf(int[] nums) {
         
-        int zeroCount = 0;
-        int zeroIndex = 0;
-        
-        int total = 1;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] == 0) { 
-                zeroCount++;
-                zeroIndex = i;
-            }
+        int[] fromLeft = nums.clone();
             
-            else {
-                total *= nums[i];
-            }
+        for (int i = 0; i < nums.length - 1; i++) {
+            fromLeft[i + 1] = fromLeft[i + 1] * fromLeft[i];
+        }
+        
+
+        int[] fromRight = nums.clone();
+
+        for (int i = fromRight.length - 1; i >= 1; i--) {
+            fromRight[i - 1] = fromRight[i - 1] * fromRight[i];
         }
         
         int[] answer = new int[nums.length];
+        answer[0] = fromRight[1];
+        answer[nums.length - 1] = fromLeft[nums.length -2];
         
-        if (zeroCount > 1) {
-            return answer;
-        }
-
-        
-        if (zeroCount == 1) {
-            answer[zeroIndex] = total;
-            return answer;
-        }
-        
-        
-        for (int i = 0; i < nums.length; i++) {
-            answer[i] = total / nums[i];
+        for (int i = 1; i < nums.length - 1; i++) {
+            answer[i] = fromLeft[i - 1] * fromRight[i + 1];
         }
         
         return answer;
     }
+    
 }
+// 1 2 3 4
+
+// fromLeft 1 2 6 24
+// fromRight 24 24 12 4
+
+// 24 12 
