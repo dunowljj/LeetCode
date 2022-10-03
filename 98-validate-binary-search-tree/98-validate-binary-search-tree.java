@@ -14,31 +14,17 @@
  * }
  */
 class Solution {
-    Set<Integer> set = new HashSet();
     
     public boolean isValidBST(TreeNode root) {
-        set.add(root.val);
-        return isValidBST(root.left, root.val, Integer.MIN_VALUE) && isValidBST(root.right, Integer.MAX_VALUE, root.val);
+        return isValidBST(root, null, null);
     }
     
-    private boolean isValidBST(TreeNode root, int max, int min) {
-        if (root == null) {
-            return true;    
-        }
+    private boolean isValidBST(TreeNode root, Integer max, Integer min) {
+        if (root == null) return true;    
+        if (max != null && root.val >= max ||
+            min != null && root.val <= min) return false;
         
-        if (set.contains(root.val)) {
-            return false;
-        }
-        
-        set.add(root.val);
-        
-        if (root.val > max || root.val < min) return false;
-        
-        boolean left =  isValidBST(root.left, root.val, min);
-        boolean right = isValidBST(root.right, max, root.val);
-        
-        
-        return left && right;
+        return isValidBST(root.left, root.val, min) && isValidBST(root.right, max, root.val);
     }
 }
 
@@ -50,4 +36,6 @@ The number of nodes in the tree is in the range [1, 10^4].
 
 같은 값을 처리하려고 부등호를 포함관계로 설정하면, Integer 최솟값이나 최댓값이 주어지면 부등호에 걸린다.
 첫 값만 처리하면 코드가 이상해져서 그냥 Set으로 중복체크를 한다.
+
+--> wrapper 클래스로 간단하게 해결하는 방법이 있었다
 */
