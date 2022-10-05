@@ -1,21 +1,16 @@
 class MinStack {
     Node node;
     
-    
-    public MinStack() {
-        node = new Node();
-    }
-    
     public void push(int val) {
-        node.child = new Node(val);
-        node.child.parent = node;
-        
-        node.child.min = Math.min(node.min, val);
-        node = node.child;
+        if (node == null) {
+            node = new Node(val, val, null);
+        } else {
+            node = new Node(val, Math.min(node.min, val), node);
+        }
     }
 
     public void pop() {
-        node = node.parent;
+        node = node.next;
     }
     
     public int top() {
@@ -28,17 +23,14 @@ class MinStack {
 }
 
 class Node {
-    Node child;
-    Node parent;
-    int min;
     int val;
+    int min;    
+    Node next;
     
-    public Node() {
-        min = Integer.MAX_VALUE;
-    }
-    
-    public Node(int val) {
+    public Node(int val, int min, Node next) {
         this.val = val;
+        this.min = min;
+        this.next = next;
     }
 }
 
@@ -64,4 +56,5 @@ class Node {
 Node에 다음 Node를 연결시키고, 포인터를 이동시키는 방식.
 - Node를 연결시킬때마다 작은 값을 갱신한다.
 - pop되면 포인터를 이전으로 돌린다. 그러면 최솟값도 자동으로 해당 지점까지의 최솟값으로 갱신된다.
+- 현재 노드를 새로 생성되는 노드의 next로 설정하면, 다음 노드만 계속해서 저장해서 해결할 수 있다.
 */
