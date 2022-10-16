@@ -1,19 +1,24 @@
 class Solution {
-    List<List<Integer>> answer = new ArrayList();
+  public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> output = new ArrayList();
+
+    int n = nums.length;
+    int nthBit = 1 << n;
     
-    public List<List<Integer>> subsets(int[] nums) {
-        dfs(nums , 0, new ArrayList());   
+    for (int i = 0; i < (int)Math.pow(2, n); i++) {
+        // 맨 앞의 0이 사라지는걸 방지하기 위해, 최대자릿수 + 1에 비트를 추가했다가 제거한다.
+        String bitmask = Integer.toBinaryString(i | nthBit).substring(1); 
         
-        return answer;
-    }
-    
-    private void dfs(int[] nums, int idx, List<Integer> list) {
-        answer.add(list);
+        List<Integer> list = new ArrayList();
+        for (int j = 0 ; j < bitmask.length(); j++) {
+            if (bitmask.charAt(j) == '1') list.add(nums[j]);
+        }
         
-        for (int i = idx; i < nums.length; i++) {
-            list.add(nums[i]);
-            dfs (nums, i + 1, new ArrayList(list));
-            list.remove(list.size() - 1);
-        } 
+        output.add(list);
     }
+      
+
+      
+    return output;
+  }
 }
