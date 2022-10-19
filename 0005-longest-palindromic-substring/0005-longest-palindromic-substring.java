@@ -12,7 +12,7 @@ class Solution {
             int nowLen = findPalindrome(i, s);
             if (maxLen < nowLen) {
                 maxLen = nowLen;
-                start = left + 1;
+                start = left;
             }
         }
         
@@ -27,12 +27,12 @@ class Solution {
             right++;
         }
         
-        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+        while (left > 0 && right < s.length() - 1 && s.charAt(left - 1) == s.charAt(right + 1)) {
             right++;
             left--;
         }
         
-        return right - left - 1;
+        return right - left + 1;
     }
 }
 
@@ -50,6 +50,8 @@ palindromic substring의 특징 : 대칭되는 위치의 값이 같아야 한다
 - 길이가 짝수인 palindromic substring은 가운데 두 문자가 같다. 연속적인 경우를 해결하면 자동으로 해결된다.
 
 길이를 캐싱할수는 없을까?
-
+ex. abcbcba
+1) [0]탐색 : p-> abcbbba
+2) [1]탐색 : 어짜피 [1]은 최대 길이가 3 or 4
 길이를 저장?
 */
