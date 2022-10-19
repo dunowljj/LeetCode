@@ -1,5 +1,4 @@
 class Solution {
-    int left;
     
     public String longestPalindrome(String s) {
         if (s.length() == 1) {
@@ -9,7 +8,21 @@ class Solution {
         int maxLen = 0;
         int start = 0;
         for (int i = 0; i < s.length() - 1; i++) {
-            int nowLen = findPalindrome(i, s);
+            
+            int left = i;
+            int right = i;
+
+            while (right < s.length() - 1 && s.charAt(right) == s.charAt(right + 1)) {
+                right++;
+            }
+
+            while (left > 0 && right < s.length() - 1 && s.charAt(left - 1) == s.charAt(right + 1)) {
+                right++;
+                left--;
+            }
+        
+            int nowLen = right - left + 1;
+            
             if (maxLen < nowLen) {
                 maxLen = nowLen;
                 start = left;
@@ -18,22 +31,7 @@ class Solution {
         
         return s.substring(start, start + maxLen);
     }
-    
-    private int findPalindrome(int idx, String s) {
-        left = idx;
-        int right = idx;
-        
-        while (right < s.length() - 1 && s.charAt(right) == s.charAt(right + 1)) {
-            right++;
-        }
-        
-        while (left > 0 && right < s.length() - 1 && s.charAt(left - 1) == s.charAt(right + 1)) {
-            right++;
-            left--;
-        }
-        
-        return right - left + 1;
-    }
+       
 }
 
 
