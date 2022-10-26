@@ -4,21 +4,22 @@ class Solution {
         int right = height.length - 1;
         int max = 0;
         
+        int preLeft = 0;
+        int preRight = 0;
+        
         while (left < right) {
             max = Math.max(max, (right - left) * Math.min(height[left], height[right]));
             
+            preLeft = height[left];
+            preRight = height[right];
+            
             if (height[left] < height[right]) {
-                int preLeft = height[left];
                 while (preLeft > height[++left]) {}
             }
             else if (height[left] > height[right]) {
-                int preRight = height[right];
                 while (preRight > height[--right]) {}
             } 
             else {
-                int preLeft = height[left];
-                int preRight = height[right];
-                
                 while (preLeft > height[++left]) {}
                 while (preRight > height[--right]) {}
             }
@@ -39,4 +40,6 @@ O(n^2) ??
 1 10 3 4 5 10 5
 
 discuss : 더 작은 포인터를 이동시키기. 같으면 둘 다 이동
+
+짧은 그래프 탐색 무시 + 더 작은 포인터만 이동, 같으면 둘 다 이동
 */
