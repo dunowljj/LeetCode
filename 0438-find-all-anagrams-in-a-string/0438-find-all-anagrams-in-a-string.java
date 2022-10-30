@@ -4,46 +4,53 @@ class Solution {
         int[] checker = new int[26];
         
         if (s.length() < p.length()) return result;
+
+        int diff = 0;
         
         // anagram 문자들 초기화
         for (int i = 0; i < p.length(); i++) {
-            checker[p.charAt(i) - 'a']++;     
+            int idx = p.charAt(i) - 'a';
+            
+            if (checker[idx] == 0) diff++;
+            checker[idx]++;     
         }
         
         // 첫 구간
         for (int i = 0; i < p.length(); i++) {
-            char curr = s.charAt(i);
-            checker[curr - 'a']--;
+            int idx = s.charAt(i) - 'a';
+            
+            if (checker[idx] == 0) diff++;
+            else if (checker[idx] == 1) diff--;
+            checker[idx]--;
         }
         
         int start = 0;
         
         // 첫 문자열 검사
-        if (isAnagram(checker)) result.add(start);
+        if (diff == 0) result.add(start);
         
         for (int i = p.length(); i < s.length(); i++) {
-            checker[s.charAt(start++) - 'a']++;
-            checker[s.charAt(i) - 'a']--;
-                
-            if (isAnagram(checker)) result.add(start);
+            
+            // start
+            int idx = s.charAt(start) - 'a';
+            
+            if (checker[idx] == 0) diff++;
+            else if (checker[idx] == -1) diff--;
+            checker[idx]++; start++;
+            
+            
+            // end
+            idx = s.charAt(i) - 'a';
+
+            if (checker[idx] == 0) diff++;
+            else if (checker[idx] == 1) diff--;
+            checker[idx]--;
+            
+            if (diff == 0) result.add(start);
         }
         
         return result;
     }
-    
-    private boolean isAnagram(int[] checker) {
-        for (int count : checker) {
-            if (count != 0) return false;
-        }
-        return true;
-    }
-    
-    // private void test(int[] checker) {
-    //     for (int count : checker) {
-    //         System.out.print(count+" ");
-    //     }
-    //     System.out.println();
-    // }
 }
 /*
 탐색하며 알파벳 --
