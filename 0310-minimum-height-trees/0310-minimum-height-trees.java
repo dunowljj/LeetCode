@@ -25,7 +25,7 @@ class Solution {
             List<Integer> newLeaves = new ArrayList();
             for (int i : leaves) {
                 int near = adjList.get(i).iterator().next();
-                adjList.get(near).remove((Integer) i);
+                adjList.get(near).remove(i);
    
                 if (adjList.get(near).size() == 1) newLeaves.add(near);
             }
