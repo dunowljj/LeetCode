@@ -1,0 +1,65 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+    private static final String NULL_VALUE = "N";
+    private static final String SPLITER = ",";
+    private static final String NULL_SPLITER = "N,";
+    private int idx = 0;
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if (root == null) return "";
+        
+        StringBuilder sb = new StringBuilder();       
+        buildLine(sb, root);
+        return sb.toString();
+    }
+
+    private void buildLine(StringBuilder builder, TreeNode root) {
+        if (root == null) {
+            builder.append(NULL_VALUE).append(SPLITER);
+            return;
+        }
+
+        builder.append(root.val).append(SPLITER);
+
+        buildLine(builder, root.left);
+
+        buildLine(builder, root.right);
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        if (data.length() == 0) return null;
+
+        String[] values = data.split(SPLITER);
+        Queue<String> queue = new LinkedList(Arrays.asList(values));
+        
+        return buildTree(queue);
+    }
+    
+    // 따로 종료조건이 없어도 알아서 null 값을 채워가며 종료한다.
+    private TreeNode buildTree(Queue<String> queue) {
+        if (queue.peek().equals(NULL_VALUE)) {
+            queue.poll();
+            return null;
+        } else {
+            TreeNode root = new TreeNode(Integer.parseInt(queue.poll()));
+            root.left = buildTree(queue);
+            root.right = buildTree(queue);
+            return root;
+        }
+    }
+}
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser = new Codec();
+// Codec deser = new Codec();
+// TreeNode ans = deser.deserialize(ser.serialize(root));
