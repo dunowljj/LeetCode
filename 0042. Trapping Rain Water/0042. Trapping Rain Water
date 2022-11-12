@@ -1,0 +1,63 @@
+class Solution {
+    public int trap(int[] height) {
+        if (height.length == 1 || height.length == 2) return 0;
+
+        int sum = 0;
+
+        int max_left = height[0];
+        int max_right = height[height.length - 1];
+
+        int left = 0;
+        int right = height.length - 1;
+
+        if (left == right) return sum;
+
+        while (left < right) {
+            while ((max_left = Math.max(max_left, height[left])) <= max_right) {
+                // max_left가 크거나 같을수밖에 없는 상황. 같은 경우 어짜피 빼도 0이라 조건이 없어도 된다.
+                // if (max_left > height[left]) 
+
+                sum += max_left - height[left];
+                left++;
+                
+                if (left == right) return sum;
+            }
+
+            while (max_left >= (max_right = Math.max(max_right, height[right]))) {
+                sum += max_right - height[right];
+                right--;
+
+                if (left == right) return sum;
+            }
+        }
+        return sum; 
+    }
+}
+
+/*
+풀이 1 brute force
+O(N^2)으로 한 인덱스의 물의양을 각각 계산한다. 결국 해당 지점을 기준으로 반으로 나눴을때, (현재 물의양) = ((양쪽에서 가장 큰 height의 값중 작은 값) - 현재 높이) 이다.
+1) height의 처음부터 전체를 순회한다.
+2) 각 인덱스의 지점에 대해서 양쪽(왼쪽, 오른쪽)으로 나눈다. 왼쪽에서의 최대 높이, 오른쪽에서의 최대높이를 구한다.
+3) 양쪽 최대 높이 중 작은 값이 해당지점에 차오를 수 있는 물이다. 거기서 해당 지점의 높이를 뺴버리면 "해당 지점의 물의 양이다."
+
+풀이 2 dp
+풀이 1에서는 각각의 요소에서 양쪽 최고 높이를 모두 탐색했다. 이 최고 높이를 저장해서 해결한다.
+
+풀이 3 스택
+1) 처음 부터 순회하면서 각 높이를 스택에 추가한다.
+2) 각 높이를 스택에 넣기 전에, 스택에 최신 높이와 현재 높이를 비교한다.
+3-1) 스택의 최신 높이가 더 높은 경우 아무것도 하지 않는다.
+3-2) 현재 높이가 더 높은 경우 스택을 pop하여 top 변수에 저장하고, 해당 상태에서 최신 높이와 top의 차이를 통해서 가로 한 줄의 물의 양을 구한다.
+4) 반복
+
+풀이 4 포인터 두개
+브루트 포스나 dp를 구할때 한 지점을 기준으로 양쪽의 maxHeight 값이 중요하다. 그래서 dp에서는 방향에 따른 각 지점의 maxHeight 값을 구해야한다.
+비슷한 맥락으로, 양쪽에 포인터를 두고 전진시키면서, 양 방향의 maxHeight를 저장하면, 해당 지점의 물의 양을 구할 수 있다.
+
+핵심은 이러하다. 
+!왼쪽 포인터에서 시작할때, 
+-> 여태 지나온 높이 값 중 가장 높은 값을 left_max로 둔다. 반대는 right_max이다. 
+-> 이때, left_max보다 right_max가 같거나 크다면, right_max가 얼마나 크냐에 상관없이 left_max가 최대 수위가 된다.
+-> 그렇다면 포인터를 이동시키면서 left_max를 갱신하고, left_max에서 현재 높이를 빼면 물이 찰 수 있는 양이 된다. 오른쪽도 같은 원리이다.
+*/
