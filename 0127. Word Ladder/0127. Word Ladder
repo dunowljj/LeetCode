@@ -1,0 +1,70 @@
+class Solution {
+    Map<String, List<String>> comboMap = new HashMap<>(); // Map<genericForm, List<word>>
+    Map<String, Set<String>> caches = new HashMap<>(); //substring하여 만든 generic한 형태를 캐싱해논다.
+    Set<String> visited = new HashSet<>(); //bfs 방문체크
+
+
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if (!wordList.contains(endWord)) return 0;
+        if (beginWord.length() == 1) return 2;
+
+        int n = beginWord.length();
+
+        // make nodes
+        for (String word : wordList) {
+            Set<String> set = caches.getOrDefault(word, new HashSet<String>());
+            
+            for (int i = 0; i < n; i++) {
+                String newWord = word.substring(0, i) + "*" + word.substring(i + 1, n);
+
+                List<String> list = comboMap.getOrDefault(newWord, new ArrayList<String>());
+                list.add(word);
+                comboMap.put(newWord, list);
+                
+                set.add(newWord); //caching
+            }
+
+            caches.put(word, set);
+        }
+        
+        Queue<String> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            String newWord = beginWord.substring(0, i) + "*" + beginWord.substring(i + 1, n);
+            queue.offer(newWord);
+        }
+ 
+        int level = 2;
+        while (!queue.isEmpty()) {
+            int len = queue.size();
+            
+            for (int i = 0; i < len; i++) {
+                String poll = queue.poll();
+
+                for (String now : comboMap.getOrDefault(poll, new ArrayList<String>())) {
+                    if (now.equals(endWord)) return level;
+
+                    for (String cachedForm : caches.get(now)) {
+                        if (!visited.contains(cachedForm)) {
+                            visited.add(cachedForm);
+                            queue.offer(cachedForm);
+                        }
+                    }
+                }
+            }
+            level++;
+        }
+
+
+        return 0;
+    }
+}
+
+/*
+특징
+- 시작 단어는 wordList에 없다.
+- 모두 lowercase 영문만 나온다.
+- 단어 길이 1~10, 단어 리스트 길이 1~5000
+- 단어리스트에는 같은 길이의 단어만 나옴
+- 시작단어와 끝단어는 무조건 다르다.
+- All the words in wordList are unique.
+*/
