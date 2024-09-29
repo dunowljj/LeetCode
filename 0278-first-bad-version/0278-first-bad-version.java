@@ -4,7 +4,7 @@ public class Solution extends VersionControl {
         int hi = n;
         
         // F F F T T T T -> find first T
-        while (lo < hi) {
+        while (lo + 1 <= hi) {
 
             int mid = (hi - lo) / 2 + lo;
 
@@ -14,7 +14,6 @@ public class Solution extends VersionControl {
                 lo = mid + 1;
             }
         }
-
         return lo;
     }
 }
