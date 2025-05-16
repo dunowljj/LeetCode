@@ -17,7 +17,8 @@ class Solution {
                 maxLen = Math.max(maxLen, used.size());
             }
 
-            if (right == s.length()) break;
+            if (right == s.length())
+                break;
 
             while (used.contains(s.charAt(right))) {
                 used.remove(s.charAt(left));
