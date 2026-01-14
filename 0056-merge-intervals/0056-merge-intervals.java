@@ -4,25 +4,16 @@ class Solution {
     public int[][] merge(int[][] intervals) {
         Arrays.sort(intervals, (i1, i2) -> i1[0] - i2[0]);
 
-        List<int[]> mergedIntervals = new ArrayList<>();
-        int start = intervals[0][0];
-        int end = intervals[0][1];
+        List<int[]> merged = new ArrayList<>();
+        for (int[] interval : intervals) {
 
-        for (int i = 1; i < intervals.length; i++) {
-            int[] curr = intervals[i];
-
-            // duplicated
-            if (curr[0] <= end) {
-                end = Math.max(end, curr[1]);
+            if (merged.isEmpty() || merged.getLast()[1] < interval[0]) {
+                merged.add(interval);
             } else {
-                mergedIntervals.add(new int[]{start, end});
-                start = curr[0];
-                end = curr[1];
+                merged.getLast()[1] = Math.max(merged.getLast()[1], interval[1]);
             }
         }
 
-        mergedIntervals.add(new int[]{start,end});
-
-        return mergedIntervals.toArray(new int[0][]);
+        return merged.toArray(new int[0][]);
     }
 }
