@@ -1,65 +1,70 @@
+import java.util.*;
+
 class Solution {
+
+    // <name, graph(email <-> email)>
+    Map<String, Map<String, Set<String>>> nameGraph = new HashMap<>(); 
+
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        Map<String, String> names = new HashMap(); // Map<email,name> : 중복없이 한 종류 씩 있는 email + 해당하는 이름
-        Map<String, Set<String>> graphMap = new HashMap(); // Map<email, Set<email>> : email로 해당 email 인접 노드 검색
-        // 굳이 Set을 써야하는 이유가 있나?
-        
-        
+        int n = accounts.size();
+    
         for (List<String> account : accounts) {
             String name = account.get(0);
-                
+
+            Map<String,Set<String>> adjGraph = nameGraph.getOrDefault(name, new HashMap<>());
+
             for (int i = 1; i < account.size(); i++) {
-                String email = account.get(i);    
-                
-                names.put(email, name);
-                
-                if (!graphMap.containsKey(email)) {
-                    graphMap.put(email, new HashSet());
+                String email1 = account.get(i);
+                Set<String> adjEmails = adjGraph.getOrDefault(email1, new HashSet<>());
+
+                for (int j = 1; j < account.size(); j++) {
+                    if (i == j) continue;
+                    String email2 = account.get(j);
+                    adjEmails.add(email2);
                 }
+
+                adjGraph.put(email1, adjEmails);
+            }
+
+            nameGraph.put(name, adjGraph);
+        }
+
+        List<List<String>> answer = new ArrayList<>();
+
+        for (String name : nameGraph.keySet()) {
+            Set<String> visit = new HashSet<>();
+            Map<String, Set<String>> adjGraph = nameGraph.get(name);
+
+            for (String startEmail : adjGraph.keySet()) {
+                if (visit.contains(startEmail)) continue;
+                visit.add(startEmail);
+
+                List<String> account = new ArrayList<>();
+                account.add(startEmail);
                 
-                if (i == 1) continue;
+                find(adjGraph, startEmail, visit, account);
                 
-                graphMap.get(account.get(i)).add(account.get(i - 1));
-                graphMap.get(account.get(i - 1)).add(account.get(i));
+                Collections.sort(account);
+                account.add(0, name);
+                answer.add(account);
             }
         }
-        
-        List<List<String>> answer = new ArrayList();
-        Set<String> visited = new HashSet();
-        
-        for (String email : names.keySet()) {
-            String name = names.get(email);
-            
-            List<String> ans = new ArrayList();
-            
-            if (visited.add(email)) {
-                dfs(email, graphMap, ans, visited);
-                
-                Collections.sort(ans);
-                ans.add(0, name);
-                answer.add(ans);
-            }
-        }
-        
+
         return answer;
     }
-    
-    private void dfs(String email, Map<String, Set<String>> graphMap, List<String> ans, Set<String> visited) {
-        ans.add(email);
-        
-        for (String next : graphMap.get(email)) {
-            if (visited.add(next)) {
-                dfs(next, graphMap, ans, visited);
-            }
+
+    public void find(Map<String, Set<String>> adjGraph, String start, Set<String> visit, List<String> account) {
+        for (String adjEmail : adjGraph.get(start)) {
+            if (visit.contains(adjEmail)) continue;
+            visit.add(adjEmail);
+
+            account.add(adjEmail);
+            find(adjGraph, adjEmail, visit, account);
         }
     }
 }
+/**
+단순히 순차 비교를 하면, 다른 계정 목록을 통해서 통합되어야 할 계정들이 스킵될 가능성이 있다.
 
-/*
-accounts[i] -> [0] name / [1]~[N] emails
-
-email길이가 불규칙하다.
-
-email Node들을 연결시켜서 통합하기!
-인접한 email들을 서로 연결하다보면, 자연스럽게 같은 이름에 대해 그래프가 형성된다.
-*/
+String
+ */
