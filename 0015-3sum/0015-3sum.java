@@ -2,48 +2,41 @@ import java.util.*;
 
 class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
+        int n = nums.length;
         Arrays.sort(nums);
-        int len = nums.length;
+        List<List<Integer>> answer = new ArrayList<>();
 
-        if (nums[0] > 0 || nums[len - 1] < 0) {
-            return new ArrayList<>();
+        if (nums[0] > 0 || nums[n - 1] < 0) {
+            return answer;
         }
 
-        Map<Integer, Integer> counts = new HashMap<>();
-        Map<Integer, Set<Integer>> idxMap = new HashMap<>();
-        for (int i = 0; i < len; i++) {
-            int num = nums[i];
-            counts.put(num, counts.getOrDefault(num, 0) + 1);
+        for (int fix = 0; fix < n; fix++) {
+            if (fix > 0 && nums[fix] == nums[fix - 1]) continue;
             
-            Set<Integer> idxs = idxMap.getOrDefault(num, new HashSet<>());
-            idxs.add(i);
-            idxMap.put(num, idxs);
-        }
+            int left = fix + 1;
+            int right = n - 1;    
+            
+            int fixVal = nums[fix];
+            while (left < right) {
+                int sum = fixVal + nums[left] + nums[right];
 
-        Set<List<Integer>> answer = new HashSet<>();
+                if (sum == 0) {
+                    answer.add(List.of(fixVal, nums[left], nums[right]));
 
-        for (int i = 0; i < len; i++) {
-            for (int j = i + 1; j < len; j++) {
-                if (i == j) continue;
+                    left++;
+                    right--;
 
-                int sum = nums[i] + nums[j];
-                int pair = 0 - sum;
-                
-                if (counts.containsKey(pair)) {
-                    Set<Integer> pairIdxs = idxMap.get(pair);
-                    if (pairIdxs.size() == 2 && pairIdxs.contains(i) && pairIdxs.contains(j)) continue;
-                    if (pairIdxs.size() == 1 && (pairIdxs.contains(i) || pairIdxs.contains(j))) continue;
-                   
-                    List<Integer> list = new ArrayList<>(List.of(nums[i], nums[j], pair));
-                    Collections.sort(list);
-                    answer.add(list);
+                    while (left < right && nums[left - 1] == nums[left]) left++;
+                    while (left < right && nums[right] == nums[right + 1]) right--;
+
+                } else if (sum < 0) {
+                    left++;
+                } else {
+                    right--;
                 }
             }
         }
 
-        return answer.stream().toList();
-    }
+        return answer;
+    }   
 }
-/**
-
- */
