@@ -1,52 +1,33 @@
+import java.util.*;
+
 class Solution {
-    List<String> result = new ArrayList();
-    
+
+    String[] digitMap = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
     public List<String> letterCombinations(String digits) {
-        if (digits.length() == 0) return result;
-        
-        char[][] represent = {{' ',' '}
-                            ,{' ',' '}
-                            ,{'a','b','c'} //2
-                            ,{'d','e','f'} //3
-                            ,{'g','h','i'} //4
-                            ,{'j','k','l'} //5
-                            ,{'m','n','o'} //6
-                            ,{'p','q','r','s'}
-                            ,{'t','u','v'}
-                            ,{'w','x','y','z'}}; //9
-        
-        char[] digitArr = digits.toCharArray();
-        int[] nums = new int[digitArr.length];
-        
-        for (int i = 0; i < nums.length; i++) {
-            nums[i] = digitArr[i] - '0';
-        }
-        
-        combination(represent, nums, new char[digits.length()], 0);
-        
-        return result;
+        List<String> answer = new ArrayList<>();
+        dfs(0, 0, digits, new StringBuilder(), answer);
+        return answer;
     }
-    
-    private void combination(char[][] represent, int[] nums, char[] comb, int depth) {
-        if (depth == nums.length) {
-            String answer = "";
-            for (char ch : comb) {
-                answer += ch;
-            }
-            result.add(answer);
+
+    public void dfs(int depth, int start, String digits, StringBuilder temp, List<String> answer) {
+        if (depth == digits.length()) {
+            answer.add(temp.toString());
             return;
         }
-        
-        int num = nums[depth];
 
-        //0~4번째를 각각 순회하게 만들어야한다.
-        for (int i = 0; i < represent[num].length; i++) {
-            comb[depth] = represent[num][i];
-            combination(represent, nums, comb, depth + 1);
+        for (int i = start; i < digits.length(); i++) {
+            int now = digits.charAt(depth) - '0';
+            String cand = digitMap[now];
+
+            for (int j = 0; j < cand.length(); j++) {
+                temp.append(cand.charAt(j));
+                dfs(depth + 1, i + 1, digits, temp, answer);
+                temp.deleteCharAt(temp.length() - 1);
+            }
         }
     }
 }
-/*
-0 <= digits.length <= 4
-(3~4)^4
-*/
+/**
+digits=2
+ */
