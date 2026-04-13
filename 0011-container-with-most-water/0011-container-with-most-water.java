@@ -1,45 +1,28 @@
 class Solution {
     public int maxArea(int[] height) {
-        int left = 0;
-        int right = height.length - 1;
+        int n = height.length;
+
+        int l = 0;
+        int r = n - 1;
         int max = 0;
-        
-        int preLeft = 0;
-        int preRight = 0;
-        
-        while (left < right) {
-            max = Math.max(max, (right - left) * Math.min(height[left], height[right]));
+        while (l < r) {
+            int h = Math.min(height[l], height[r]);
+            max = Math.max(max, h * (r - l));
             
-            preLeft = height[left];
-            preRight = height[right];
-            
-            if (height[left] < height[right]) {
-                while (preLeft > height[++left]) {}
-            }
-            else if (height[left] > height[right]) {
-                while (preRight > height[--right]) {}
-            } 
-            else {
-                while (preLeft > height[++left]) {}
-                while (preRight > height[--right]) {}
+            if (height[l] < height[r]) {
+                l++;
+            } else {
+                r--;
             }
         }
+
         return max;
     }
 }
-/*
-2 <= n <= 10^5
-0 <= height[i] <= 10^4
+/**
+수직선 개수 최대 10^5개 -> N
+높이 최대 10^4
 
-water = Max(h[i], h[j]) * (i - j)
-O(n^2) ??
-한 container 기준으로 바깥부터 다른 하나를 탐색하고, 더 긴그래프가 있을때만 검사하는건 어떨까?
-
-1 1 1 1 1 1 1 1 1 6 6 1 1 1 1 1 1 1 2
-3 2 2 2 1
-1 10 3 4 5 10 5
-
-discuss : 더 작은 포인터를 이동시키기. 같으면 둘 다 이동
-
-짧은 그래프 탐색 무시 + 더 작은 포인터만 이동, 같으면 둘 다 이동
-*/
+N^2 -> 시간 초과
+투포인터로 그리디하게 탐색 
+ */
