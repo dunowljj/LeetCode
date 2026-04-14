@@ -1,61 +1,47 @@
 class Solution {
     public List<Integer> findAnagrams(String s, String p) {
-        List<Integer> result = new ArrayList();
-        int[] checker = new int[26];
-        
-        if (s.length() < p.length()) return result;
+        List<Integer> answer = new ArrayList<>();
+        if (s.length() < p.length()) return answer;
 
-        int diff = 0;
-        
-        // anagram 문자들 초기화
+        int[] counts = new int[26];
+        int need = 0;
         for (int i = 0; i < p.length(); i++) {
             int idx = p.charAt(i) - 'a';
-            
-            if (checker[idx] == 0) diff++;
-            checker[idx]++;     
+            need++;
+            counts[idx]++;
         }
         
-        // 첫 구간
         for (int i = 0; i < p.length(); i++) {
             int idx = s.charAt(i) - 'a';
-            
-            if (checker[idx] == 0) diff++;
-            else if (checker[idx] == 1) diff--;
-            checker[idx]--;
+            if (counts[idx] >= 1) need--;
+            counts[idx]--;
         }
-        
-        int start = 0;
-        
-        // 첫 문자열 검사
-        if (diff == 0) result.add(start);
-        
-        for (int i = p.length(); i < s.length(); i++) {
-            
-            // start
-            int idx = s.charAt(start) - 'a';
-            
-            if (checker[idx] == 0) diff++;
-            else if (checker[idx] == -1) diff--;
-            checker[idx]++; start++;
-            
-            
-            // end
-            idx = s.charAt(i) - 'a';
 
-            if (checker[idx] == 0) diff++;
-            else if (checker[idx] == 1) diff--;
-            checker[idx]--;
+        if (need == 0) {
+            answer.add(0);
+        }   
+
+        int l = 0;
+        int r = p.length();
+
+        while (r < s.length()) {
+            int remove = s.charAt(l) - 'a';
+            int add = s.charAt(r) - 'a';
             
-            if (diff == 0) result.add(start);
+            // if remove==add need to seperate inc
+            if (counts[remove] >= 0) need++;
+            counts[remove]++;
+            
+            if (counts[add] >= 1) need--;            
+            counts[add]--;
+            
+            l++; r++;
+
+            if (need == 0) {
+                answer.add(l);
+            }
         }
-        
-        return result;
+
+        return answer;
     }
 }
-/*
-탐색하며 알파벳 --
-window에서 빠져나오는 알파벳 ++
-모든 값 0이하이면 일치
-
-
-*/
