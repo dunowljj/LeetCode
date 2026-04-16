@@ -2,69 +2,63 @@ import java.util.*;
 
 class Solution {
 
-    // <name, graph(email <-> email)>
-    Map<String, Map<String, Set<String>>> nameGraph = new HashMap<>(); 
+    Map<String, String> parents = new HashMap<>(); // email -> email
+    Map<String, String> names = new HashMap<>();
 
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
-        int n = accounts.size();
-    
+       
         for (List<String> account : accounts) {
             String name = account.get(0);
-
-            Map<String,Set<String>> adjGraph = nameGraph.getOrDefault(name, new HashMap<>());
-
             for (int i = 1; i < account.size(); i++) {
-                String email1 = account.get(i);
-                Set<String> adjEmails = adjGraph.getOrDefault(email1, new HashSet<>());
+                String email = account.get(i);
 
-                for (int j = 1; j < account.size(); j++) {
-                    if (i == j) continue;
-                    String email2 = account.get(j);
-                    adjEmails.add(email2);
-                }
-
-                adjGraph.put(email1, adjEmails);
+                names.put(email, name);
+                if (!parents.containsKey(email)) parents.put(email, email);
             }
 
-            nameGraph.put(name, adjGraph);
+            for (int i = 1; i < account.size() - 1; i++) {
+                union(account.get(i), account.get(i + 1));
+            }
+        }
+
+        Map<String, Set<String>> rootToOthers = new HashMap<>(); // name -> List<email>
+        for (String key : parents.keySet()) {
+            String rootEmail = find(key);
+            
+            rootToOthers
+                .computeIfAbsent(rootEmail, k -> new HashSet<>())
+                .add(key);
         }
 
         List<List<String>> answer = new ArrayList<>();
-
-        for (String name : nameGraph.keySet()) {
-            Set<String> visit = new HashSet<>();
-            Map<String, Set<String>> adjGraph = nameGraph.get(name);
-
-            for (String startEmail : adjGraph.keySet()) {
-                if (visit.contains(startEmail)) continue;
-                visit.add(startEmail);
-
-                List<String> account = new ArrayList<>();
-                account.add(startEmail);
-                
-                find(adjGraph, startEmail, visit, account);
-                
-                Collections.sort(account);
-                account.add(0, name);
-                answer.add(account);
-            }
+        for (String rootEmail : rootToOthers.keySet()) {
+            List<String> emails = new ArrayList<>(rootToOthers.get(rootEmail));
+            Collections.sort(emails);
+            
+            String name = names.get(rootEmail);
+            emails.add(0, name);
+            answer.add(emails);
         }
-
+        
         return answer;
     }
 
-    public void find(Map<String, Set<String>> adjGraph, String start, Set<String> visit, List<String> account) {
-        for (String adjEmail : adjGraph.get(start)) {
-            if (visit.contains(adjEmail)) continue;
-            visit.add(adjEmail);
+    private void union(String e1, String e2) {
+        String p1 = find(e1);
+        String p2 = find(e2);
 
-            account.add(adjEmail);
-            find(adjGraph, adjEmail, visit, account);
+        if (!p1.equals(p2)) {
+            parents.put(p1, p2);
         }
     }
-}
-/**
-단순히 순차 비교를 하면, 다른 계정 목록을 통해서 통합되어야 할 계정들이 스킵될 가능성이 있다.
 
-String
- */
+    private String find(String e) {
+        if (!parents.get(e).equals(e)) {
+            String parent = find(parents.get(e));
+            parents.put(e, parent);
+            
+            return parent;
+        }
+        else return e;
+    }
+}
