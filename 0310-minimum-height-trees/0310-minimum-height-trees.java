@@ -1,47 +1,55 @@
+import java.util.*;
+
 class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        if (n == 1) return List.of(0);
         
-        List<Set<Integer>> adjList = new ArrayList();
-        boolean[] visited = new boolean[n];
-        
-        for (int i = 0; i < n; i++) {
-            adjList.add(new HashSet());
-        }
-        
-        for (int[] edge : edges) {
-            adjList.get(edge[0]).add(edge[1]);
-            adjList.get(edge[1]).add(edge[0]);
-        }
-        
-        List<Integer> leaves = new ArrayList();
-        for (int i = 0; i < adjList.size(); i++) {
-            if (adjList.get(i).size() == 1) leaves.add(i);
-        }
-        
-        
-        while (n > 2) {
-            n -= leaves.size();
-            List<Integer> newLeaves = new ArrayList();
-            for (int i : leaves) {
-                int near = adjList.get(i).iterator().next();
-                adjList.get(near).remove(i);
-   
-                if (adjList.get(near).size() == 1) newLeaves.add(near);
-            }
-            leaves = newLeaves;
-        }
-        
-        return leaves;
-    }
-    
+        int[] degree = new int[n];
 
-    
-   
+        List<Integer>[] adj = new ArrayList[n];
+        for (int i = 0; i < adj.length; i++) {
+            adj[i] = new ArrayList<>();
+        }
+
+        for (int[] edge : edges) {
+            adj[edge[0]].add(edge[1]);
+            adj[edge[1]].add(edge[0]);
+
+            degree[edge[0]]++;
+            degree[edge[1]]++;
+        }
+
+        int count = n;
+        Set<Integer> answer = new HashSet<>();
+        for (int i = 0; i < n; i++) answer.add(i);
+
+        while (count > 2) {
+            List<Integer> removeCand = new ArrayList<>();
+            for (int node = 0; node < degree.length; node++) {
+                if (degree[node] == 1) {
+                    removeCand.add(node);
+                }
+            }
+
+            for (int node : removeCand) {
+                int adjNode = adj[node].get(0);
+                
+                degree[node]--;
+                degree[adjNode]--;
+
+                adj[node].remove(0);
+                for (int i = 0; i < adj[adjNode].size(); i++) {
+                    if (adj[adjNode].get(i) == node) {
+                        adj[adjNode].remove(i);
+                        break;
+                    }
+                }
+
+                answer.remove((Integer)node);
+                count--;
+            }
+        }
+
+        // 노드가 한 개만 남았을때는, 차수가 모두 0이 되어버리므로 degree만으로 판단 불
+        return new ArrayList<>(answer);
+    }
 }
-/*
-leafNode 제거하면서 루트를 구하기
-루트가 3개 이상이면 leafNode가 존재할 수 밖에 없다. 
--> 1개, 혹은 2개가 남을때까지 제거
--> 남은 노드들이 정답
-*/
