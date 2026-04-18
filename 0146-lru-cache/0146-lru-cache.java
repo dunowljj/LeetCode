@@ -26,6 +26,24 @@ class LRUCache {
         return find.value;
     }
 
+    public void put(int key, int value) {
+        Node find = ref.get(key);
+        if (find == null) {
+            Node newNode = new Node(key, value);
+            ref.put(key, newNode);
+            insertFirst(newNode);
+
+            if (ref.size() > capacity) {
+                ref.remove(tail.prev.key);
+                detach(tail.prev);
+            }
+
+        } else {
+            find.value = value;
+            update(find);
+        }
+    }
+
     private void update(Node node) {
         detach(node);
         insertFirst(node);
@@ -44,18 +62,6 @@ class LRUCache {
 
         (head.next).prev = node;
         head.next = node;
-    }
-    
-    public void put(int key, int value) {
-        Node newNode = new Node(key, value);
-        ref.put(key, newNode);
-      
-        insertFirst(newNode);
-
-        if (ref.size() > capacity) {
-            ref.remove(tail.prev.key);
-            detach(tail.prev);
-        }
     }
 
     static class Node {
