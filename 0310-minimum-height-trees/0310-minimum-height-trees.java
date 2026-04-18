@@ -3,7 +3,6 @@ import java.util.*;
 class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
         if (n == 1) return List.of(0);
-        if (n == 2) return List.of(0, 1);
 
         int[] degree = new int[n];
 
