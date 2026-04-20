@@ -4,6 +4,7 @@ class Solution {
 
     Map<String, String> parents = new HashMap<>(); // email -> email
     Map<String, String> names = new HashMap<>();
+    Map<String, Integer> sizes = new HashMap<>();
 
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
        
@@ -13,7 +14,10 @@ class Solution {
                 String email = account.get(i);
 
                 names.put(email, name);
-                if (!parents.containsKey(email)) parents.put(email, email);
+                if (!parents.containsKey(email)) {
+                    parents.put(email, email);
+                    sizes.put(email, 1);
+                }
             }
 
             for (int i = 1; i < account.size() - 1; i++) {
@@ -48,7 +52,16 @@ class Solution {
         String p2 = find(e2);
 
         if (!p1.equals(p2)) {
-            parents.put(p1, p2);
+            int s1 = sizes.get(p1);
+            int s2 = sizes.get(p2);
+
+            if (s1 > s2) {
+                parents.put(p1, p2);
+                sizes.put(p1, s1 + s2);
+            } else {
+                parents.put(p2, p1);
+                sizes.put(p2, s1 + s2);
+            }   
         }
     }
 
