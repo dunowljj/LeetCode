@@ -21,18 +21,18 @@ class Solution {
             }
         }
 
-        Map<String, Set<String>> rootToOthers = new HashMap<>(); // name -> List<email>
+        Map<String, List<String>> rootToOthers = new HashMap<>(); // name -> List<email>
         for (String key : parents.keySet()) {
             String rootEmail = find(key);
             
             rootToOthers
-                .computeIfAbsent(rootEmail, k -> new HashSet<>())
+                .computeIfAbsent(rootEmail, k -> new ArrayList<>())
                 .add(key);
         }
 
         List<List<String>> answer = new ArrayList<>();
         for (String rootEmail : rootToOthers.keySet()) {
-            List<String> emails = new ArrayList<>(rootToOthers.get(rootEmail));
+            List<String> emails = rootToOthers.get(rootEmail);
             Collections.sort(emails);
             
             String name = names.get(rootEmail);
