@@ -14,38 +14,37 @@
  * }
  */
 class Solution {
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
+    int[] inorderIdx;
+    final int OFFSET = 3000;
 
-        return buildTree(preorder, inorder, 0, 0, inorder.length - 1);
-    }
-    
-    private TreeNode buildTree(int[] preorder, int[] inorder, int preStart, int inStart, int inEnd) {
-        if (preStart == preorder.length || inStart > inEnd) return null;
-        
-        TreeNode root = new TreeNode(preorder[preStart]); //이전에 찾은 루트의 인덱스로 루트 생성
-        int findIdx = 0;
-        for (int i = inStart; i <= inEnd; i++) { //부등호 차이로 오버플로가 나는 이유?
-            if (inorder[i] == root.val) {
-                findIdx = i; //inorder에서 root의 index
-                break;
-            }
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        int n = preorder.length;
+        inorderIdx = new int[3001 + OFFSET];
+        for (int i = 0; i < n; i++) {
+            inorderIdx[inorder[i] + OFFSET] = i;
         }
-        
-        root.left = buildTree(preorder, inorder, preStart + 1, inStart, findIdx - 1);
-        root.right = buildTree(preorder, inorder, preStart + (findIdx - inStart) + 1 , findIdx + 1, inEnd);
-            
-        return root;
+
+        return buildTree(0, n-1, 0, n-1, preorder, inorder);
+    }
+
+    public TreeNode buildTree(int preStart, int preEnd, int inStart, int inEnd, int[] preorder, int[] inorder) {
+        if (preStart > preEnd) {
+            return null;
+        }
+
+        // Start of preorder is parent
+        int parent = preorder[preStart];
+        TreeNode node = new TreeNode(parent);
+
+        // By using parent val, find inorder's parent and size of left subtree.
+        int inMid = inorderIdx[parent + OFFSET];
+        int leftSize = inMid - inStart;
+
+        int preMid = preStart + leftSize;
+
+        node.left = buildTree(preStart + 1,  preMid, inStart,    inMid - 1, preorder, inorder);
+        node.right = buildTree(preMid + 1,   preEnd, inMid + 1,  inEnd    , preorder, inorder);
+
+        return node;
     }
 }
-/*
-전위 순회의 첫 요소는 root를 나타낸다.
-중위 순회의 첫 요소는 왼쪽 맨 아래 node를 나타낸다.
-중위 순회 배열에서 root노드를 기준으로 양쪽을 나누면, left의 node들, right의 node들로 나뉘어진다.
-
-
-preStart -> preOrder에서 루트노드의 위치
-findIdx -> inOrder에서 루트노드의 위치
-inStart -> inOrder에서 탐색 시작범위
-inEnd -> inOrder에서 탐색 끝 범위
-
-*/
