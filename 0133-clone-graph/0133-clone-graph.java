@@ -22,14 +22,14 @@ class Node {
 
 class Solution {
 
-    Map<Integer, Node> visit = new HashMap<>();
+    Node[] nodes = new Node[101];
 
     public Node cloneGraph(Node node) {
         if (node == null) return null;
-        if (visit.containsKey(node.val)) return visit.get(node.val);
+        if (nodes[node.val] != null) return nodes[node.val];
 
         Node copy = new Node(node.val);
-        visit.put(copy.val, copy);
+        nodes[copy.val] = copy;
 
         for (Node neighbor : node.neighbors) {
             copy.neighbors.add(cloneGraph(neighbor));
