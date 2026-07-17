@@ -1,39 +1,39 @@
 class Solution {
-    boolean[] visited;
-    boolean[] passedBefore;
+
     List<Integer>[] adj;
+    boolean[] visited;
 
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-        adj = new ArrayList[numCourses];
-        for (int i = 0; i < numCourses; i++) adj[i] = new ArrayList<>();
+        adj = new ArrayList[numCourses + 1];
 
-        for (int[] pre : prerequisites) {
-            adj[pre[0]].add(pre[1]);
+        for (int i = 0; i <= numCourses; i++) {
+            adj[i] = new ArrayList<>();
         }
 
-        passedBefore = new boolean[numCourses];
-        visited = new boolean[numCourses];
+        for (int[] prequisite : prerequisites) {
+            int target = prequisite[0];
+            int pre = prequisite[1];
 
-        boolean hasCycle = false;
-        for (int i = 0; i < numCourses; i++) {
-            hasCycle |= hasCycle(i);
+            adj[pre].add(target);
         }
 
-        return !hasCycle;
+        // 0~n-1
+        boolean canFinish = false;
+        for (int i = 0; i <= numCourses; i++) {
+            visited = new boolean[numCourses + 1];
+            canFinish |= hasCycle(i);
+        }
+        return !canFinish;
     }
 
-    public boolean hasCycle(int now) {    
-        if (visited[now]) return true;
-        if (passedBefore[now]) return false;
-        passedBefore[now] = true;
-        visited[now] = true;
+    private boolean hasCycle(int start) {
+        visited[start] = true;
 
-        boolean hasCycle = false;
-        for (int next : adj[now]) {
-            hasCycle |= hasCycle(next);
+        for (int next : adj[start]) {
+            if (visited[next]) return true;
+            if (hasCycle(next)) return true;
         }
 
-        visited[now] = false;
-        return hasCycle;
+        return false;
     }
 }
