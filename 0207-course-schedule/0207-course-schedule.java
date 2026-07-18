@@ -1,16 +1,11 @@
 class Solution {
 
     List<Integer>[] adj;
-
-    /**
-        0 == not visited
-        1 == in dfs path
-        2 == complete
-     */
-    int[] state;
+    int[] indegree;
 
     public boolean canFinish(int numCourses, int[][] prerequisites) {
         adj = new ArrayList[numCourses];
+        indegree = new int[numCourses];
 
         for (int i = 0; i < numCourses; i++) {
             adj[i] = new ArrayList<>();
@@ -21,33 +16,36 @@ class Solution {
             int pre = prequisite[1];
 
             adj[pre].add(target);
+            indegree[target]++;
         }
 
-        // 0~n-1
-        for (int i = 0; i < numCourses; i++) {
-            state = new int[numCourses];
-            if (state[i] == 0 && hasCycle(i)) return false;
+
+        // topology sort
+        int total = numCourses;
+        while (total > 0) {
+            int leaf = findLeaf();
+            
+            if (leaf == -1) break;
+
+            indegree[leaf]--;
+            total--;
+            for (int next : adj[leaf]) {
+                indegree[next]--;
+            }
+
         }
 
-        return true;
+        return total == 0;
     }
 
-    private boolean hasCycle(int now) {
-        if (state[now] == 1) {
-            return true;
+    // when leaf isn't exist, return -1;
+    private int findLeaf() {
+        for (int i = 0; i < indegree.length; i++) {
+            if (indegree[i] == 0) {
+                return i;
+            }
         }
 
-        if (state[now] == 2) {
-            return false;
-        }
-
-        state[now] = 1;
-        
-        for (int next : adj[now]) {
-            if (hasCycle(next)) return true;
-        }
-
-        state[now] = 2;
-        return false;
+        return -1;
     }
 }
