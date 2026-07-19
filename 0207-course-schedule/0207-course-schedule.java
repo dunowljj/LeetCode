@@ -1,3 +1,5 @@
+import java.util.*;
+
 class Solution {
 
     List<Integer>[] adj;
@@ -22,30 +24,29 @@ class Solution {
 
         // topology sort
         int total = numCourses;
-        while (total > 0) {
-            int leaf = findLeaf();
-            
-            if (leaf == -1) break;
+        Queue<Integer> leaves = new LinkedList<>();
 
-            indegree[leaf]--;
-            total--;
-            for (int next : adj[leaf]) {
-                indegree[next]--;
+        while (total > 0) {
+
+            for (int i = 0; i < indegree.length; i++) {
+                if (indegree[i] == 0) {
+                    leaves.offer(i);
+                    indegree[i] = -1;
+                    total--;
+                }
             }
 
+            if (leaves.isEmpty()) break;
+
+            while (!leaves.isEmpty()) {
+                int leaf = leaves.poll();
+
+                for (int next : adj[leaf]) {
+                    indegree[next]--;
+                }
+            }
         }
 
         return total == 0;
-    }
-
-    // when leaf isn't exist, return -1;
-    private int findLeaf() {
-        for (int i = 0; i < indegree.length; i++) {
-            if (indegree[i] == 0) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 }
